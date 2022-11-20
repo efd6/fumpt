@@ -1,0 +1,14 @@
+# newer versions go on top
+- version: "0.2.0"
+  changes:
+    - description: Fix bugs
+      link: https://github.com/elastic/integrations/pull/0
+      type: bugfix
+    - description: Make enhancement
+      type: enhancement
+      link: https://github.com/elastic/integrations/pull/0
+- version: "0.1.0"
+  changes:
+    - description: Initial package draft
+      type: enhancement
+      link: https://github.com/elastic/integrations/pull/0

@@ -1,0 +1,29 @@
+title: Package
+type: logs
+streams:
+  - input: udp
+    title: Package
+    description: Collect Package (via Syslog)
+    template_path: udp.yml.hbs
+    vars:
+      - name: tags
+        type: text
+        title: Tags
+        multi: true
+        required: true
+        show_user: false
+        default:
+          - pkg
+  - input: logfile
+    enabled: false
+    title: Package
+    description: Collect Package (via log file)
+    vars:
+      - name: tags
+        type: text
+        title: Tags
+        multi: true
+        required: true
+        show_user: false
+        default:
+          - pkg

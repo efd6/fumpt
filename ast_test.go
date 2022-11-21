@@ -153,6 +153,27 @@ var canonicalQuotesTests = []struct {
 		in:   `if: "ok('string')"`,
 		want: `if: ok('string')`,
 	},
+	{
+		name: "single_quote_spaced_keys",
+		in:   `'key with spaces': value`,
+		want: `'key with spaces': value`,
+	},
+	{
+		name: "double_quote_spaced_keys",
+		in:   `"key with spaces": value`,
+		want: `'key with spaces': value`,
+	},
+	{
+		name: "number_key_noquote",
+		in: `
+map:
+  "123": "string1"
+  "456": "string2"
+`,
+		want: `map:
+  123: string1
+  456: string2`,
+	},
 }
 
 func TestCanonicalQuotes(t *testing.T) {
@@ -163,7 +184,7 @@ func TestCanonicalQuotes(t *testing.T) {
 				t.Fatalf("failed to parse document: %v", err)
 			}
 			for _, doc := range file.Docs {
-				ast.Walk(canonicalQuotes{}, doc)
+				ast.Walk(canonicalQuotes{root: doc}, doc)
 			}
 			got := file.String()
 

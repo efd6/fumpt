@@ -101,9 +101,15 @@ func applyChanges(path string, visitors []ast.Visitor) (string, error) {
 	}
 	for _, doc := range file.Docs {
 		for _, v := range visitors {
-			if sl, ok := v.(sortLists); ok {
-				sl.root = doc
-				v = sl
+			// Tell visitors that need to traverse
+			// up about the tree root.
+			switch u := v.(type) {
+			case canonicalQuotes:
+				u.root = doc
+				v = u
+			case sortLists:
+				u.root = doc
+				v = u
 			}
 			ast.Walk(v, doc)
 		}

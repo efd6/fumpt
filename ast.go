@@ -22,7 +22,10 @@ func mustPath(p *yaml.Path, err error) *yaml.Path {
 // canonicalQuotes is an ast.Visitor that canonicalises quote usage in the
 // YAML source. If possible, the visitor will remove quotes, if this cannot
 // be done, it will try to use single quotes in place of double quotes.
-type canonicalQuotes struct{}
+type canonicalQuotes struct {
+	// root is the root node of the tree being walked.
+	root ast.Node
+}
 
 func (v canonicalQuotes) Visit(n ast.Node) ast.Visitor {
 	switch n := n.(type) {
@@ -31,7 +34,7 @@ func (v canonicalQuotes) Visit(n ast.Node) ast.Visitor {
 			break
 		}
 		switch {
-		case canStripQuotes(n.Token):
+		case canStripQuotes(n, v.root):
 			n.Token.Type = token.StringType
 		case canSingleQuote(n):
 			n.Token.Type = token.SingleQuoteType
@@ -43,7 +46,11 @@ func (v canonicalQuotes) Visit(n ast.Node) ast.Visitor {
 // canStripQuotes returns whether the token would be interpreted as a string
 // with the same value if it had its quotes removed and it contains no special
 // characters.
-func canStripQuotes(tok *token.Token) (ok bool) {
+func canStripQuotes(n *ast.StringNode, root ast.Node) (ok bool) {
+	if parent, ok := up(1, root, n).(*ast.MappingValueNode); ok && parent.Key == n {
+		return !strings.ContainsAny(n.Token.Value, ` :{}[],&*#?|-<>=!%@\`+"\t\n")
+	}
+	tok := n.Token
 	if strings.TrimSpace(tok.Value) != tok.Value || hasPrefixAny(tok.Value, `:{}[],&*#?|-<>=!%@\`) {
 		return false
 	}

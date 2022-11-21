@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
@@ -190,7 +189,6 @@ func TestCanonicalQuotes(t *testing.T) {
 
 			if got != test.want {
 				t.Errorf("unexpected result:\n--- got\n+++ want\n%s", cmp.Diff(got, test.want))
-				fmt.Println(got)
 			}
 		})
 	}
@@ -401,7 +399,6 @@ func TestCanonicalOrder(t *testing.T) {
 
 			if got != test.want {
 				t.Errorf("unexpected result:\n--- got\n+++ want\n%s", cmp.Diff(got, test.want))
-				fmt.Println(got)
 			}
 		})
 	}
@@ -616,7 +613,6 @@ func TestSortLists(t *testing.T) {
 
 			if got != test.want {
 				t.Errorf("unexpected result:\n--- got\n+++ want\n%s", cmp.Diff(got, test.want))
-				fmt.Println(got)
 			}
 		})
 	}
@@ -741,3 +737,57 @@ owner:
       example: 666777888999
 `
 )
+
+var indentTests = []struct {
+	name string
+	in   string
+	want string
+}{
+	{
+		name: "in_line_json_indent_array",
+		in: `
+    - e:
+        s:
+           [
+             "key",
+             "value"
+           ]
+`,
+		want: `    - e:
+        s: ["key", "value"]`,
+	},
+	{
+		name: "in_line_json_indent_object",
+		in: `
+    - e:
+        s:
+           [
+             {
+               "key": "value"
+             }
+           ]
+`,
+		want: `    - e:
+        s: [{"key": "value"}]`,
+	},
+}
+
+// See https://github.com/goccy/go-yaml/issues/324
+func TestFixIndent(t *testing.T) {
+	for _, test := range indentTests {
+		t.Run(test.name, func(t *testing.T) {
+			file, err := parser.ParseBytes([]byte(test.in), parser.ParseComments)
+			if err != nil {
+				t.Fatalf("failed to parse document: %v", err)
+			}
+			for _, doc := range file.Docs {
+				ast.Walk(indentVisitor{}, doc)
+			}
+			got := file.String()
+
+			if got != test.want {
+				t.Errorf("unexpected result:\n--- got\n+++ want\n%s", cmp.Diff(got, test.want))
+			}
+		})
+	}
+}

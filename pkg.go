@@ -100,6 +100,7 @@ func applyChanges(path string, visitors []ast.Visitor) (string, error) {
 		return "", fmt.Errorf("failed to parse document: %w", err)
 	}
 	for _, doc := range file.Docs {
+		ast.Walk(indentVisitor{}, doc)
 		for _, v := range visitors {
 			// Tell visitors that need to traverse
 			// up about the tree root.

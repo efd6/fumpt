@@ -7,7 +7,37 @@ import (
 
 // conventions contains the specific conventions for file classes in the
 // package.
-var conventions map[string][]ast.Visitor
+var conventions = map[string][]ast.Visitor{
+	"_dev/build/build.yml": {
+		canonicalQuotes{},
+	},
+
+	"changelog.yml": {
+		canonicalQuotes{},
+		canonicalOrder{},
+	},
+	"manifest.yml": {
+		canonicalQuotes{},
+		canonicalOrder{},
+	},
+
+	"data_stream/*/_dev/test/*/test-*-config.yml": {
+		canonicalQuotes{},
+		canonicalOrder{},
+	},
+	"data_stream/*/elasticsearch/ingest_pipeline/*.yml": {
+		canonicalQuotes{},
+		canonicalOrder{},
+	},
+	"data_stream/*/fields/*.yml": {
+		canonicalQuotes{},
+		canonicalOrder{},
+	},
+	"data_stream/*/manifest.yml": {
+		canonicalQuotes{},
+		canonicalOrder{},
+	},
+}
 
 // isECSgroup returns whether the node n is in a 'type: group' field.
 func isECSgroup(root ast.Node, n *ast.SequenceNode) bool {

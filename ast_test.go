@@ -13,6 +13,7 @@ var canonicalQuotesTests = []struct {
 	name string
 	in   string
 	want string
+	skip string
 }{
 	{
 		name: "single_quoted",
@@ -173,11 +174,25 @@ map:
   123: string1
   456: string2`,
 	},
+	{
+		skip: "see https://github.com/goccy/go-yaml/issues/323",
+		name: "quote_key_noquote_val",
+		in: `map:
+  "key1": string1
+  "key2": string2
+`,
+		want: `map:
+  key1: string1
+  key2: string2`,
+	},
 }
 
 func TestCanonicalQuotes(t *testing.T) {
 	for _, test := range canonicalQuotesTests {
 		t.Run(test.name, func(t *testing.T) {
+			if test.skip != "" {
+				t.Skipf("skipping %s: %s", test.name, test.skip)
+			}
 			file, err := parser.ParseBytes([]byte(test.in), parser.ParseComments)
 			if err != nil {
 				t.Fatalf("failed to parse document: %v", err)

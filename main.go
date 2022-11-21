@@ -19,6 +19,7 @@ import (
 
 func main() {
 	write := flag.Bool("w", false, "write result to (source) files instead of stdout")
+	pipeline := flag.Bool("pipeline", false, "format pipeline")
 	help := flag.Bool("h", false, "display help")
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
@@ -44,6 +45,15 @@ archive for inspection.
 `, os.Args[0])
 		flag.PrintDefaults()
 		os.Exit(0)
+	}
+
+	// Work around a bug in goccy/go-yaml that incorrectly
+	// joins adjacent lines when a map key is quoted.
+	// This usually only happens in pipelines, so don't
+	// format them unless we have been asked to.
+	// See https://github.com/goccy/go-yaml/issues/323.
+	if !*pipeline {
+		delete(conventions, "data_stream/*/elasticsearch/ingest_pipeline/*.yml")
 	}
 
 	paths := []string{"."}

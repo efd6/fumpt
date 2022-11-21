@@ -57,8 +57,8 @@ archive for inspection.
 	}
 
 	paths := []string{"."}
-	if len(os.Args) > 1 {
-		paths = os.Args[1:]
+	if len(flag.Args()) > 1 {
+		paths = flag.Args()[1:]
 	}
 	for _, p := range paths {
 		r, err := root(p)

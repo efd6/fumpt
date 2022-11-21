@@ -47,6 +47,9 @@ func walk(root string, w io.Writer, rules map[string][]ast.Visitor) error {
 		if err != nil {
 			return err
 		}
+		if !strings.HasSuffix(data, "\n") {
+			data += "\n"
+		}
 
 		if w == nil {
 			err := os.WriteFile(path, []byte(data), 0o644)

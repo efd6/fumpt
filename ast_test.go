@@ -171,8 +171,8 @@ map:
   "456": "string2"
 `,
 		want: `map:
-  123: string1
-  456: string2`,
+  '123': 'string1'
+  '456': 'string2'`,
 	},
 	{
 		name: "quote_key_single_quote_val",

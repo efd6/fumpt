@@ -53,7 +53,9 @@ func (v canonicalQuotes) Visit(n ast.Node) ast.Visitor {
 // characters.
 func canStripQuotes(n *ast.StringNode, root ast.Node) (ok bool) {
 	if parent, ok := up(1, root, n).(*ast.MappingValueNode); ok && parent.Key == n {
-		return !strings.ContainsAny(n.Token.Value, ` :{}[],&*#?|-<>=!%@\`+"\t\n")
+		if strings.ContainsAny(n.Token.Value, ` :{}[],&*#?|-<>=!%@\`+"\t\n") {
+			return false
+		}
 	}
 	tok := n.Token
 	if strings.TrimSpace(tok.Value) != tok.Value || hasPrefixAny(tok.Value, `:{}[],&*#?|-<>=!%@\`) {

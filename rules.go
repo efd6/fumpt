@@ -32,6 +32,10 @@ var conventions = map[string][]ast.Visitor{
 	"data_stream/*/fields/*.yml": {
 		canonicalQuotes{},
 		canonicalOrder{},
+		sortLists{
+			canSort: isECSgroup,
+			less:    lessByName,
+		},
 	},
 	"data_stream/*/manifest.yml": {
 		canonicalQuotes{},

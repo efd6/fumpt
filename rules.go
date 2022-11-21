@@ -14,24 +14,54 @@ var conventions = map[string][]ast.Visitor{
 
 	"changelog.yml": {
 		canonicalQuotes{},
-		canonicalOrder{},
+		canonicalOrder{
+			"$[*].version":                0,
+			"$[*].changes":                1,
+			"$[*].changes[*].description": 0,
+			"$[*].changes[*].type":        1,
+			"$[*].changes[*].link":        2,
+		},
 	},
 	"manifest.yml": {
 		canonicalQuotes{},
-		canonicalOrder{},
+		canonicalOrder{
+			"*.name":        0,
+			"*.title":       1,
+			"$.version":     2,
+			"$.release":     3,
+			"*.description": 4,
+			"$.owner":       -1,
+		},
 	},
 
 	"data_stream/*/_dev/test/*/test-*-config.yml": {
 		canonicalQuotes{},
-		canonicalOrder{},
+		canonicalOrder{
+			"$.service":     0,
+			"$.input":       1,
+			"$.data_stream": 2,
+		},
 	},
 	"data_stream/*/elasticsearch/ingest_pipeline/*.yml": {
 		canonicalQuotes{},
-		canonicalOrder{},
+		canonicalOrder{
+			"*.description": 0,
+			"*.if":          1,
+			"*.field":       2,
+			"*.override":    -3,
+			"*.tags":        -2,
+			"*.on_failure":  -1,
+		},
 	},
 	"data_stream/*/fields/*.yml": {
 		canonicalQuotes{},
-		canonicalOrder{},
+		canonicalOrder{
+			"*.name":        0,
+			"*.type":        1,
+			"*.level":       2,
+			"*.description": 3,
+			"*.example":     -1,
+		},
 		sortLists{
 			canSort: isECSgroup,
 			less:    lessByName,
@@ -39,7 +69,16 @@ var conventions = map[string][]ast.Visitor{
 	},
 	"data_stream/*/manifest.yml": {
 		canonicalQuotes{},
-		canonicalOrder{},
+		canonicalOrder{
+			"*.name":        0,
+			"*.title":       1,
+			"*.type":        2,
+			"*.description": 3,
+			"*.required":    4,
+			"*.show_user":   5,
+			"*.multi":       6,
+			"*.default":     -1,
+		},
 	},
 }
 

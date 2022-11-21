@@ -42,6 +42,9 @@ the directory of the command line argument.
 By default the formatting is written to standard output as a txtar
 archive for inspection.
 
+BUG: Due to an issue in the underlying YAML library, maps with quoted
+keys must have quoted values. 
+
 `, os.Args[0])
 		flag.PrintDefaults()
 		os.Exit(0)
@@ -51,8 +54,7 @@ archive for inspection.
 	// joins adjacent lines when a map key is quoted.
 	// This usually only happens in pipelines, so don't
 	// format them unless we have been asked to.
-	// See https://github.com/goccy/go-yaml/issues/323.
-	if !*pipeline {
+	if workAroundGoYAML323 && !*pipeline {
 		delete(conventions, "data_stream/*/elasticsearch/ingest_pipeline/*.yml")
 	}
 

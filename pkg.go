@@ -100,7 +100,7 @@ func classFor(rel string) string {
 func applyChanges(path string, visitors []ast.Visitor) (string, error) {
 	file, err := parser.ParseFile(path, parser.ParseComments)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse document: %w", err)
+		return "", fmt.Errorf("failed to parse document %s: %w", path, err)
 	}
 	for _, doc := range file.Docs {
 		ast.Walk(indentVisitor{}, doc)

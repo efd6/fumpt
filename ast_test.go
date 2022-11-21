@@ -155,13 +155,13 @@ var canonicalQuotesTests = []struct {
 	},
 	{
 		name: "single_quote_spaced_keys",
-		in:   `'key with spaces': value`,
-		want: `'key with spaces': value`,
+		in:   `'key with spaces': 'value'`,
+		want: `'key with spaces': 'value'`,
 	},
 	{
 		name: "double_quote_spaced_keys",
-		in:   `"key with spaces": value`,
-		want: `'key with spaces': value`,
+		in:   `"key with spaces": 'value'`,
+		want: `'key with spaces': 'value'`,
 	},
 	{
 		name: "number_key_noquote",
@@ -175,7 +175,57 @@ map:
   456: string2`,
 	},
 	{
-		skip: "see https://github.com/goccy/go-yaml/issues/323",
+		name: "quote_key_single_quote_val",
+		in: `map:
+  "key1": 'string1'
+  "key2": 'string2'
+`,
+		want: `map:
+  key1: string1
+  key2: string2`,
+	},
+	{
+		name: "quote_key_double_quote_val",
+		in: `map:
+  "key1": "string1"
+  "key2": "string2"
+`,
+		want: `map:
+  key1: string1
+  key2: string2`,
+	},
+	{
+		name: "quote_key_spaces_single_quote_val",
+		in: `map:
+  "key 1": 'string1'
+  "key 2": 'string2'
+`,
+		want: `map:
+  'key 1': 'string1'
+  'key 2': 'string2'`,
+	},
+	{
+		name: "quote_key_spaces_double_quote_val",
+		in: `map:
+  "key 1": "string1"
+  "key 2": "string2"
+`,
+		want: `map:
+  'key 1': 'string1'
+  'key 2': 'string2'`,
+	},
+	{
+		name: "quote_key_spaces_double_quote_escaped_val",
+		in: `map:
+  "key 1": "string\n1"
+  "key 2": "string\n2"
+`,
+		want: `map:
+  'key 1': "string\n1"
+  'key 2': "string\n2"`,
+	},
+	{
+		skip: skipReasonGoYAML323,
 		name: "quote_key_noquote_val",
 		in: `map:
   "key1": string1

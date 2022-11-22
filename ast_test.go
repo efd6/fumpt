@@ -835,10 +835,31 @@ var indentTests = []struct {
 		want: `    - e:
         s: [{"key": "value"}]`,
 	},
+	{
+		name: "comment_association",
+		in: `
+# Comment for key1
+key1:
+  # Comment for key2
+  key2: value2
+  # Comment for key3
+  key3: value3
+# Comment for key4
+key4: value4
+`,
+		want: `# Comment for key1
+key1:
+  # Comment for key2
+  key2: value2
+  # Comment for key3
+  key3: value3
+# Comment for key4
+key4: value4`,
+	},
 }
 
-// See https://github.com/goccy/go-yaml/issues/324
-func TestFixIndent(t *testing.T) {
+// See https://github.com/goccy/go-yaml/issues/324 and https://github.com/goccy/go-yaml/issues/311.
+func TestFixup(t *testing.T) {
 	for _, test := range indentTests {
 		t.Run(test.name, func(t *testing.T) {
 			file, err := parser.ParseBytes([]byte(test.in), parser.ParseComments)
@@ -846,7 +867,7 @@ func TestFixIndent(t *testing.T) {
 				t.Fatalf("failed to parse document: %v", err)
 			}
 			for _, doc := range file.Docs {
-				ast.Walk(indentVisitor{}, doc)
+				ast.Walk(fixupVisitor{}, doc)
 			}
 			got := file.String()
 

@@ -250,13 +250,26 @@ func (v sortLists) Visit(n ast.Node) ast.Visitor {
 	return v
 }
 
-// indentVisitor is a work-around for a failure in goccy/go-yaml to
-// correctly set indent of in-line JSON. See https://github.com/goccy/go-yaml/issues/324.
-type indentVisitor struct{}
+// fixupVisitor is a work-around for a failures in goccy/go-yaml to
+// correctly set indent of in-line JSON and associate comments in
+// mapping nodes.
+type fixupVisitor struct{}
 
-func (v indentVisitor) Visit(n ast.Node) ast.Visitor {
+func (v fixupVisitor) Visit(n ast.Node) ast.Visitor {
 	switch n := n.(type) {
+	case *ast.MappingNode:
+		// Fix comment associations. See https://github.com/goccy/go-yaml/issues/311.
+		if n.Comment != nil {
+			for _, c := range n.Values {
+				if c.Path == n.Comment.Path {
+					c.Comment = n.Comment
+					n.Comment = nil
+					break
+				}
+			}
+		}
 	case *ast.MappingValueNode:
+		// Fix in-line JSON indentation. See https://github.com/goccy/go-yaml/issues/324.
 		indent := n.GetToken().Position.IndentLevel
 		if n.Key.GetToken().Position.IndentLevel <= indent {
 			if n, ok := n.Key.(*ast.StringNode); ok {

@@ -50,11 +50,7 @@ keys must have quoted values.
 		os.Exit(0)
 	}
 
-	// Work around a bug in goccy/go-yaml that incorrectly
-	// joins adjacent lines when a map key is quoted.
-	// This usually only happens in pipelines, so don't
-	// format them unless we have been asked to.
-	if workAroundGoYAML323 && !*pipeline {
+	if !*pipeline {
 		delete(conventions, "data_stream/*/elasticsearch/ingest_pipeline/*.yml")
 	}
 

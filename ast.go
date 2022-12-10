@@ -30,11 +30,6 @@ type canonicalQuotes struct {
 func (v canonicalQuotes) Visit(n ast.Node) ast.Visitor {
 	switch n := n.(type) {
 	case *ast.StringNode:
-		if typ, yes := mustQuoteValue(n, v.root); yes {
-			n.Token.Type = typ
-			break
-		}
-
 		if n.Token.Type != token.DoubleQuoteType && n.Token.Type != token.SingleQuoteType {
 			break
 		}

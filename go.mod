@@ -15,3 +15,5 @@ require (
 	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 )
+
+replace github.com/goccy/go-yaml => github.com/efd6/go-yaml v0.0.0-20221211200852-358b0ba07ab7

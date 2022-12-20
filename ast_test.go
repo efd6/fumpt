@@ -249,7 +249,7 @@ func TestCanonicalQuotes(t *testing.T) {
 			for _, doc := range file.Docs {
 				ast.Walk(canonicalQuotes{root: doc}, doc)
 			}
-			got := file.String()
+			got := strings.TrimSpace(file.String())
 
 			if got != test.want {
 				t.Errorf("unexpected result:\n--- got\n+++ want\n%s", cmp.Diff(got, test.want))
@@ -818,7 +818,8 @@ var indentTests = []struct {
            ]
 `,
 		want: `    - e:
-        s: ["key", "value"]`,
+        s: ["key", "value"]
+`,
 	},
 	{
 		name: "in_line_json_indent_object",
@@ -832,7 +833,8 @@ var indentTests = []struct {
            ]
 `,
 		want: `    - e:
-        s: [{"key": "value"}]`,
+        s: [{"key": "value"}]
+`,
 	},
 	{
 		name: "comment_association",
@@ -853,7 +855,8 @@ key1:
   # Comment for key3
   key3: value3
 # Comment for key4
-key4: value4`,
+key4: value4
+`,
 	},
 }
 
@@ -868,7 +871,7 @@ func TestFixup(t *testing.T) {
 			for _, doc := range file.Docs {
 				ast.Walk(fixupVisitor{}, doc)
 			}
-			got := file.String()
+			got := file.String() // Don't use space trimming here to keep subtle indent effects.
 
 			if got != test.want {
 				t.Errorf("unexpected result:\n--- got\n+++ want\n%s", cmp.Diff(got, test.want))

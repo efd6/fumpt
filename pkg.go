@@ -118,7 +118,38 @@ func applyChanges(path string, visitors []ast.Visitor) (string, error) {
 			ast.Walk(v, doc)
 		}
 	}
-	return file.String(), nil
+	return redent(file.String(), 2)
+}
+
+func redent(doc string, indent int) (string, error) {
+	cm := make(yaml.CommentMap)
+	var v interface{}
+	err := yaml.NewDecoder(strings.NewReader(doc),
+		yaml.CommentToMap(cm),
+		yaml.UseOrderedMap(),
+	).Decode(&v)
+	if err != nil {
+		return "", err
+	}
+	var buf strings.Builder
+	err = yaml.NewEncoder(&buf,
+		yaml.WithComment(cm),
+		yaml.Indent(indent),
+		yaml.IndentSequence(true),
+		yaml.UseSingleQuote(true),
+	).Encode(v)
+	if err != nil {
+		return "", err
+	}
+	s := buf.String()
+	if spaces := strings.Repeat(" ", indent); strings.HasPrefix(s, spaces) {
+		lines := strings.Split(s, "\n")
+		for i, l := range lines {
+			lines[i] = strings.TrimPrefix(l, spaces)
+		}
+		s = strings.Join(lines, "\n")
+	}
+	return s, nil
 }
 
 // root finds the root of the package containing the directory provided.

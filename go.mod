@@ -3,7 +3,7 @@ module github.com/efd6/fumpt
 go 1.19
 
 require (
-	github.com/goccy/go-yaml v1.9.8
+	github.com/goccy/go-yaml v1.10.0
 	github.com/google/go-cmp v0.5.9
 	golang.org/x/tools v0.3.0
 )
